@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Speech Recognition</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="cell markdown" data-colab_type="text" id="view-in-github">
+<p><a href="https://colab.research.google.com/github/ArshiAbolghasemi/AI-UT/bg
+data-colab="{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}"
+id="yX6S7yFINCUv" data-outputId="a79fb904-10c9-463b-d08f-31c0b080ec67">
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install hmmlearn</span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>Collecting hmmlearn
+  Downloading hmmlearn-0.3.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (161 kB)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 161.1/161.1 kB 2.6 MB/s eta 0:00:00
+ent already satisfied: numpy&gt;=1.10 in /usr/local/lib/python3.10/dist-packages (from hmmlearn) (1.25.2)
+Requirement already satisfied: scikit-learn!=0.22.0,&gt;=0.16 in /usr/local/lib/python3.10/dist-packages (from hmmlearn) (1.2.2)
+Requirement already satisfied: scipy&gt;=0.19 in /usr/local/lib/python3.10/dist-packages (from hmmlearn) (1.11.4)
+Requirement already satisfied: joblib&gt;=1.1.1 in /usr/local/lib/python3.10/dist-packages (from scikit-learn!=0.22.0,&gt;=0.16-&gt;hmmlearn) (1.3.2)
+Requirement already satisfied: threadpoolctl&gt;=2.0.0 in /usr/local/lib/python3.10/dist-packages (from scikit-learn!=0.22.0,&gt;=0.16-&gt;hmmlearn) (3.4.0)
+Installing collected packages: hmmlearn
+Successfully installed hmmlearn-0.3.2
+</code></pre>
+</div>
+</div>
+<section id="imports" class="cell markdown" id="7cr-XfGnwueL">
+<h2>Imports</h2>
+</section>
+<div class="cell code" id="BaKAT1Qi5i9q">
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> ticker</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, accuracy_score, precision_score</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> hmmlearn <span class="im">import</span> hmm</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tabulate <span class="im">import</span> tabulate</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict, Any, Tuple, Union, Literal</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> random <span class="im">import</span> choice</span></code></pre></div>
+</div>
+<section id="settings" class="cell markdown" id="DfjwhlklFbYZ">
+<h2>Settings</h2>
+</section>
+<div class="cell code" id="W8FiYTNoFdcY">
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>DRIVE_MOUNTED_PATH<span class="op">=</span>os.path.join(os.getcwd(), <span class="st">&#39;drive/&#39;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>AUDIOS_DATASET_PATH<span class="op">=</span>os.path.join(DRIVE_MOUNTED_PATH, <span class="st">&#39;MyDrive/AI-UT/hidden-markov-models/recordings/&#39;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># feature extraction</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>NUM_CEPSTRAL<span class="op">=</span><span class="dv">13</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>DEFAULT_SR<span class="op">=</span><span class="dv">22050</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>DEFAULT_HOP_LENGTH<span class="op">=</span><span class="dv">512</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>DEFAULT_N_FFT<span class="op">=</span><span class="dv">2048</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># hmmlearn</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>N_COMPONENTS<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>DEFAULT_COVARIANCE_TYPE<span class="op">=</span><span class="st">&#39;diag&#39;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>N_ITERATE<span class="op">=</span><span class="dv">100</span></span></code></pre></div>
+</div>
+<section id="mountin-to-google-drive" class="cell markdown"
+id="KrCcCoLrwmJp">
+<h2>Mountin to google drive</h2>
+</section>
+<div class="cell code"
+data-colab="{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}"
+id="iytOtQcqwr6b" data-outputId="160899d5-deb2-4ee5-a3dc-f27f7aa6e67a">
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>drive.mount(DRIVE_MOUNTED_PATH)</span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount(&quot;/content/drive/&quot;, force_remount=True).
+</code></pre>
+</div>
+</div>
+<section id="data-preprocessing-and-feature-extracting"
+class="cell markdown" id="dQuuLvAH1zLB">
+<h1>Data Preprocessing and Feature Extracting</h1>
+</section>
+<section id="normalizing" class="cell markdown" id="PUKA5tpXI0HO">
+<h2>Normalizing</h2>
+</section>
+<div class="cell markdown" id="Rd61b33JKntG">
+<p>Normalization can be achieved using various techniques, but a common
+approach is to subtract the mean of the data and divide by the standard
+deviation have zero mean and unit variance. This is known as Z-score
+normalization or standardization. The formula for Z-score normalization
+is: <span class="math display">$$z = \frac{x - \mu}{\sigma}
+$$</span></p>
+</div>
+<section id="load-audios-dataset" class="cell markdown"
+id="OxOEW4ndBOby">
+<h2>Load Audios Dataset</h2>
+<p>First, let's load our audio data samples.</p>
+</section>
+<div class="cell code" id="RtZ0wictBfQc">
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_digit_and_speaker_from_file_name(audio_file: <span class="bu">str</span>) <span class="op">-&gt;</span> Tuple[<span class="bu">int</span>, <span class="bu">str</span>]:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  parts <span class="op">=</span> audio_file.split(<span class="st">&#39;_&#39;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">int</span>(parts[<span class="dv">0</span>]), parts[<span class="dv">1</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_audios_dataset() <span class="op">-&gt;</span> Tuple[List[Dict[<span class="bu">str</span>, Any]],</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                                   np.ndarray, np.ndarray]:</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  audios_data <span class="op">=</span> <span class="bu">list</span>(<span class="bu">dict</span>())</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  digits <span class="op">=</span> []</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  speakers <span class="op">=</span> []</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> audio_file <span class="kw">in</span> os.listdir(AUDIOS_DATASET_PATH):</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> audio_file.endswith(<span class="st">&#39;.wav&#39;</span>) : <span class="cf">continue</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    digit, speaker <span class="op">=</span> extract_digit_and_speaker_from_file_name(audio_file)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    audio_file_path <span class="op">=</span> os.path.join(AUDIOS_DATASET_PATH, audio_file)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    signal, sr <span class="op">=</span> librosa.load(audio_file_path)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    normalized_signal <span class="op">=</span> librosa.util.normalize(signal)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    audios_data.append({</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;signal&#39;</span>: normalized_signal,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;sampling_rate&#39;</span>: sr,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;digit&#39;</span>: digit,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;speaker&#39;</span>: speaker</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    digits.append(digit)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    speakers.append(speaker)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> audios_data, np.array(digits), np.array(speakers)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>audios_data, digits, speakers <span class="op">=</span> load_audios_dataset()</span></code></pre></div>
+</div>
+<section id="segmentation" class="cell markdown" id="2khhUqo3N8a2">
+<h2>Segmentation</h2>
+</section>
+<div class="cell markdown" id="-5emuW1m7bwb">
+<ol>
+<li><p>Does <strong>segmentation</strong> useful for this dataset?
+why?</p>
+<blockquote>
+In the scenario you've described, segmentation would likely be very
+useful for various tasks such as <strong>feature extraction</strong>,
+and <strong>noise reduction</strong> and it helps to our <strong>process
+be more efficient</strong>.
+<ul>
+<li><strong>Feature Extraction</strong>: For tasks like speech
+recognition or speaker identification, feature extraction is crucial.
+Segmenting the audio into smaller frames allows for the extraction of
+features such as MFCCs, which capture the spectral characteristics of
+speech over short time windows. By extracting features from each segment
+independently, you can capture the nuances of each speaker's
+pronunciation and speech patterns more effectively.</li>
+<li><strong>Noise Reduction</strong>: If the audio recordings contain
+background noise or interference, segmentation can aid in targeted noise
+reduction. By segmenting the audio into smaller frames, it becomes
+easier to identify and remove segments that are corrupted by noise. This
+improves the overall quality of the audio data and enhances the
+performance of downstream tasks such as speech recognition.</li>
+<li><strong>Efficient Processing</strong>: Processing 3000 audio files
+containing numerous repetitions of 0 - 9 digits pronounced by six
+speakers can be computationally intensive. Segmenting the audio into
+smaller frames allows for more efficient processing, as you can analyze
+smaller segments in parallel. This reduces computational requirements
+and facilitates faster processing of the audio data.</li>
+</ul>
+</blockquote></li>
+</ol>
+</div>
+<section id="feature-extraction" class="cell markdown"
+id="Jyw9m120OCWH">
+<h2>Feature Extraction</h2>
+</section>
+<section id="audio-features-explaination" class="cell markdown"
+id="s0KwfMGUjRLj">
+<h3>Audio Features Explaination</h3>
+</section>
+<div class="cell markdown" id="AiYhqi3R7UuH">
+<ol>
+<li><p>Explain each of the following terms: "MFCC," "Zero Crossing
+Rate," "mel-spectrogram," and "chroma features," as well as the
+relationships between them.</p>
+<blockquote>
+<p><strong>MFCC (Mel-frequency cepstral coefficients)</strong>: MFCCs
+are a widely used feature representation for audio signals, particularly
+in speech and music processing. They capture the spectral
+characteristics of audio signals by transforming the frequency domain
+representation of the signal into a compressed, decorrelated form. MFCCs
+are obtained by taking the Discrete Cosine Transform (DCT) of the log of
+the power spectrum of the signal, after mapping the frequency axis to
+the mel scale, which approximates the human auditory system's response
+to different frequencies. MFCCs are commonly used as features for tasks
+such as speech recognition, speaker identification, and music genre
+classification.<br> <strong>Zero Crossing Rate</strong>: The zero
+crossing rate (ZCR) is a simple feature that measures the rate at which
+a signal changes its sign (crosses zero) within a given time
+window.Higher ZCR values indicate more rapid changes in the audio
+signal, which may correspond to sounds with higher pitch or more rapid
+variations in amplitude.<br> <strong>Mel-spectrogram</strong>: A
+mel-spectrogram is a spectrogram where the frequency axis is converted
+from Hertz to the mel scale, which approximates the human auditory
+system's perception of pitch. A mel-spectrogram represents the
+time-varying frequency content of an audio signal over time.<br>
+<strong>Chroma Features</strong>: Chroma features represent the
+distribution of pitch classes (or chroma) in an audio signal,
+disregarding the exact frequency information. Chroma features are
+particularly useful for tasks where the harmonic content and tonal
+structure of the audio signal are important, such as music genre
+classification, chord recognition, and melody extraction.<br>
+Relationships between the terms:<br></p>
+</blockquote></li>
+</ol>
+<ul>
+<li>MFCCs, mel-spectrograms, and chroma features are all representations
+of audio signals commonly used in audio processing tasks.</li>
+<li>Mel-spectrograms and chroma features are derived from the frequency
+domain representation of the audio signal, while MFCCs are derived from
+the mel-scaled power spectrum.</li>
+<li>MFCCs capture both spectral and temporal characteristics of audio
+signals and are widely used as features in speech and music processing
+tasks.</li>
+<li>Mel-spectrograms provide a perceptually relevant representation of
+the frequency content of audio signals, while chroma features focus on
+the tonal content.</li>
+<li>Zero crossing rate provides information about the temporal dynamics
+of the audio signal and can be used in conjunction with other features
+to characterize audio signals further.</li>
+</ul>
+</div>
+<section id="mfcc" class="cell markdown" id="MLRnjn5J7MB5">
+<h3>MFCC</h3>
+<p>Now, let's compute MFCC for each sample</p>
+</section>
+<div class="cell code" id="y1YXycYq7RDd">
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_mfcc(audios_data: List[Dict[<span class="bu">str</span>, <span class="bu">any</span>]]) <span class="op">-&gt;</span> Tuple[Dict[<span class="bu">int</span>, np.ndarray],</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                                                             Dict[<span class="bu">str</span>, np.ndarray]]:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  mfcc_features_group_by_digit <span class="op">=</span> {}</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  mfcc_features_group_by_speaker <span class="op">=</span> {}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> audio_data <span class="kw">in</span> audios_data:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    digit <span class="op">=</span> audio_data[<span class="st">&#39;digit&#39;</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    speaker <span class="op">=</span> audio_data[<span class="st">&#39;speaker&#39;</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    mfcc <span class="op">=</span> librosa.feature.mfcc(y<span class="op">=</span>audio_data[<span class="st">&#39;signal&#39;</span>],</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                                 sr<span class="op">=</span>audio_data[<span class="st">&#39;sampling_rate&#39;</span>],</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                                 n_mfcc<span class="op">=</span>NUM_CEPSTRAL,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                n_fft<span class="op">=</span>DEFAULT_N_FFT,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                                hop_length<span class="op">=</span>DEFAULT_HOP_LENGTH)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    mfcc_features_group_by_digit.setdefault(digit, []).append(mfcc)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    mfcc_features_group_by_speaker.setdefault(speaker, []).append(mfcc)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> mfcc_features_group_by_digit, mfcc_features_group_by_speaker</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>mfcc_features_group_by_digit, mfcc_features_group_by_speaker<span class="op">=</span> compute_mfcc(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    audios_data)</span></code></pre></div>
+</div>
+<div class="cell markdown" id="4S9g-suvqxcw">
+<p>Here is a heatmap of the MFCCs for one of our samples.</p>
+</div>
+<div class="cell code"
+data-colab="{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:487}"
+id="YP7_1FlArMPP" data-outputId="63318403-856a-45f1-905e-bdb5135c16bd">
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> display_mfcc_heat_map(mfcc: np.ndarray) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  librosa.display.specshow(mfcc, x_axis<span class="op">=</span><span class="st">&#39;time&#39;</span>, sr<span class="op">=</span>DEFAULT_SR)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  plt.colorbar(<span class="bu">format</span><span class="op">=</span>ticker.FuncFormatter(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">lambda</span> x, pos: <span class="ss">f&#39;+</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss"> dB&#39;</span> <span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="ss">f&#39;</span><span class="sc">{</span>x<span class="sc">:.2f}</span><span class="ss"> dB&#39;</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  plt.title(<span class="st">&#39;MFCC&#39;</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  plt.xlabel(<span class="st">&#39;Time&#39;</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  plt.ylabel(<span class="st">&#39;MFCC&#39;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  plt.show()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>random_mfcc_feature <span class="op">=</span> choice(mfcc_features_group_by_digit[choice(<span class="bu">list</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    mfcc_features_group_by_digit.keys()))])</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>display_mfcc_heat_map(random_mfcc_feature)</span></code></pre></div>
+<div class="output display_data">
+<p><img
+src="images/mfcc.png" /></p>
+</div>
+</div>
+<div class="cell markdown" id="fi-CTXpsTybr">
+<ol>
+<li><p>Examining the robustness of MFCCs against changes in signals and
+noise.</p>
+<blockquote>
+<p>MFCC is very sensitive to noise interference, which tends to
+drastically degrade the performance of recognition system</p>
+</blockquote></li>
+<li><p>Are there any situations where MFCCs are least efficient?</p>
+<blockquote>
+While Mel-Frequency Cepstral Coefficients (MFCCs) are widely used and
+generally effective for many audio processing tasks, there are
+situations where they may be less efficient or less suitable compared to
+other feature extraction techniques. Some scenarios where MFCCs may be
+less efficient include:
+<ul>
+<li>Non-Stationary Signals</li>
+<li>Highly Dynamic Signals</li>
+<li>Highly Noisy Environments</li>
+</ul>
+</blockquote></li>
+<li><p>Why do the coefficients overlap with each other in calculating
+MFCCs?</p>
+<blockquote>
+<p>Overlap between adjacent MFCC coefficients helps improve the
+representation of the spectral characteristics of the audio signal,
+enhances the discriminative power of the features, and ensures
+robustness to variations in the signal.</p>
+</blockquote></li>
+<li><p>Why are only first 12 or 13 MFCC coefficients commonly used in
+most projects?</p>
+<blockquote>
+<p>The reason why we typically consider only the first 13 MFCCs is that
+they capture the most relevant information for speech recognition while
+discarding redundant information. Higher-order coefficients contain less
+discriminatory information and are more sensitive to noise, so they are
+often excluded to reduce computational complexity and improve the
+performance of speech processing systems.</p>
+</blockquote></li>
+</ol>
+</div>
+<section id="introduction-to-hmms" class="cell markdown"
+id="Y_wC6oG-ca5h">
+<h1>Introduction To HMMs</h1>
+<ol>
+<li><p>What is the meaning of 'state' and 'observation' in HMMs? In this
+problem, what are our states and how are observations perceived?</p>
+<blockquote>
+<p><strong>State</strong> represents the underlying, unobservable
+(hidden) variables that govern the behavior of the system. Each state is
+associated with a probability transitions to other states.<br>
+<strong>Observation</strong> represents the observable outcomes or
+measurements associated with each state, providing information about the
+underlying state of the system. Each state is associated with a
+probability distribution over possible observations.<br> In this
+problem, our states are each digit from 0 to 9, and our observations are
+features that are extracted from the audio signal. These features
+provide information about the sound characteristics of the speech
+signal.</p>
+</blockquote></li>
+<li><p>HMMs can be categorized based on dependencies between hidden
+states. Explain First-Order HMM and describe its difference with other
+types of HMM.</p>
+<blockquote>
+<p>The First-Order HMM is a type of HMM that state z<sub>t</sub> at time
+t, depends only on the previous state z<sub>t - 1</sub> at time t-1. The
+n-th Order HMM depends on n previous states.<br> In a First-Order HMM,
+since we only depend on the previous state, we can calculate the
+distribution over states as follows: <center><span
+class="math display">$$P(z_1, z_2,.., z_N) =
+P(z_1)\prod_{i=2}^{N}P(z_i|z_{i-1})$$</span></center> There is another
+assumption that is called Stationary assumption that we can define it as
+follows: "transition probabilities the same at all times".<br> Also past
+and future are independent given the present.</p>
+</blockquote></li>
+<li><p>For which kind of problems is HMM more suitable?</p>
+<blockquote>
+HMMs are sutiable for problems that we want reasoning about a sequence
+of observations events and events that we are interested in are hidden.
+HMMs allows us to talk about both observed events Hidden and hidden
+events that we think of as causal factors in our probabilistic mode.<br>
+Here are some types of problems where HMMs are commonly used:
+<ul>
+<li>Speech Recognition</li>
+<li>Robot Localization</li>
+<li>User Attention</li>
+<li>Medical Monitoring</li>
+</ul>
+</blockquote></li>
+<li><p>Describe pros and cons of HMM.</p>
+<blockquote>
+<p>pros: <ul> <li> <b>Efficiency and Scalablity</b>: thanks to the
+Markov property that reduces the computational complexity of inference
+and learning. Algorithms such as the forward-backward algorithm, the
+Viterbi algorithm, or the Baum-Welch algorithm can be used to further
+optimize performance. </li> <li> <b>Simplicity</b>: HMMs are relatively
+simple to understand and implement compared to other models. </li> <li>
+<b>Robustness</b>: HMMs are robust to noise and uncertainty, which is
+particularly useful in speech recognition where the quality of audio
+recordings can be poor. </li> <li> <b>Flexibility and
+Expressiveness</b>: enables them to model complex and non-linear
+dependencies between hidden states and observations. </li> </ul> cons:
+<ul> <li> They are restrictive and simplistic, as they assume that the
+hidden states are discrete and finite, and that the observations are
+conditionally independent given the hidden states, which may not be true
+</li> <li> They are prone to overfitting and underfitting due to needing
+a careful choice of the number of hidden states and prior distributions
+over the parameters </li> <li> They are sensitive and brittle, as they
+rely on quality and quantity of observed data, and may suffer from data
+sparsity, noise, or missing values. </li> </ul></p>
+</blockquote></li>
+<li><p>Explain other types of HMMs.</p></li>
+</ol>
+<blockquote>
+<p>HMMs can be classified according to the nature of the distribution of
+the output probabilities <span
+class="math inline"><em>b</em><sub><em>i</em></sub>(<em>O</em><sub><em>k</em></sub>)</span>
+. If the observations <span
+class="math inline"><em>O</em><sub><em>k</em></sub></span> are discrete
+quantities, as we have assumed up until now, then <span
+class="math inline"><em>b</em><sub><em>i</em></sub>(<em>O</em><sub><em>k</em></sub>)</span>
+are probability mass functions (PMFs), and the HMM is called a discrete
+HMM. If the observations are continuous random variables, then the HMM
+is called a continuous HMM. In this case, <span
+class="math inline"><em>b</em><sub><em>i</em></sub>(<em>O</em><sub><em>k</em></sub>)</span>
+are probability distribution functions (PDFs) and we have a continuous
+observation space.</p>
+</blockquote>
+<blockquote>
+<ul>
+<li><strong>First-Order HMM</strong>: The state transitions depend only
+on the current state and not on previous states. This is the simplest
+form of HMM.</li>
+<li><strong>Higher-Order HMM</strong>: In contrast to a first-order HMM,
+higher-order HMMs allow transitions to depend on multiple previous
+states. These models can capture more complex dependencies in sequential
+data but may require more parameters and computational resources.</li>
+<li><strong>Left-Right HMM</strong>: A left-to-right HMM has a
+left-to-right transition to the next state as well as a self-transition.
+The self-transition is used to model contiguous features in the same
+state. It is popularly used to model speech as a time sequence of
+distinct events that start at an initial state, which is usually labeled
+Begin, and end at a final state, which is usually labeled End</li>
+<li><strong>Hidden Semi-Markov Model (HSMM)</strong>: A hidden
+semi-Markov model (HSMM) is a statistical model with the same structure
+as a hidden Markov model except that the unobservable process is
+semi-Markov rather than Markov. This means that the probability of there
+being a change in the hidden state depends on the amount of time that
+has elapsed since entry into the current state. This is in contrast to
+hidden Markov models where there is a constant probability of changing
+state given survival in the state up to that time.</li>
+<li><strong>Factorial HMM</strong>: A Factorial Hidden Markov Model
+(FHMM) is a type of probabilistic model that extends the traditional
+Hidden Markov Model (HMM) to handle multiple observation sequences
+simultaneously. In an FHMM, each observation sequence is associated with
+its own set of hidden states, but the hidden states from different
+sequences are interconnected through shared parameters. This allows the
+model to capture dependencies between multiple sequences and perform
+joint inference across them.</li>
+<li><strong>Profile HMM</strong>: A Profile Hidden Markov Model (Profile
+HMM) is a probabilistic model commonly used in bioinformatics for
+sequence analysis tasks such as sequence alignment and protein family
+classification. Profile HMMs are derived from multiple sequence
+alignments (MSAs) of related sequences and are designed to capture the
+evolutionary relationships and sequence conservation within a protein
+family or a set of related sequences.</li>
+</ul>
+</blockquote>
+</section>
+<section id="implementation-model" class="cell markdown"
+id="lqrSH3Tc66cx">
+<h1>Implementation Model</h1>
+<p>In this project, we aim to train our model with two different target
+variables: digit and speaker. First, we implement our model using the
+hmmlearn library, and then we implement the HMM from scratch.</p>
+</section>
+<section id="implementation-with-libraries" class="cell markdown"
+id="zPr_827V6_33">
+<h2>Implementation with Libraries</h2>
+<p>In this section, we are going to design and implement an HMM model
+and train it using our available dataset. Then, we will evaluate its
+performance using methods introduced in the evaluation section.</p>
+</section>
+<div class="cell code" id="RLsWFQh2L1jM">
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_hmms(mfcc_feats: Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], List[np.ndarray]]) <span class="op">-&gt;</span> Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>],</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                                                                            hmm.GaussianHMM]:</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  trained_models <span class="op">=</span> {}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  n_components <span class="op">=</span> <span class="bu">len</span>(mfcc_feats.keys())</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> target_var <span class="kw">in</span> mfcc_feats.keys():</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> hmm.GaussianHMM(n_components<span class="op">=</span>n_components, n_iter<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> [mfcc.T <span class="cf">for</span> mfcc <span class="kw">in</span> mfcc_feats[target_var]]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    observations <span class="op">=</span> np.concatenate(X)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    lenghts <span class="op">=</span> [<span class="bu">len</span>(seq_observation) <span class="cf">for</span> seq_observation <span class="kw">in</span> observations]</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    model.fit(observations)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    trained_models[target_var] <span class="op">=</span> model</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> trained_models</span></code></pre></div>
+</div>
+<div class="cell markdown" id="0bz6_-1ehPIQ">
+<p>Before training our models, we should split our dataset into test and
+train sets</p>
+</div>
+<div class="cell code" id="Mztrg9-Aht0G">
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> split_test_train_data(mfcc_feats: Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], List[np.ndarray]],</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                       test_size: Union[<span class="bu">float</span>, Literal[<span class="dv">0</span>, <span class="dv">1</span>]] <span class="op">=</span> <span class="fl">0.2</span>) <span class="op">-&gt;</span> Tuple[</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                           Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], List[np.ndarray]],</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                           List[np.ndarray], List[<span class="bu">int</span>]]:</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="kw">not</span> (<span class="dv">0</span> <span class="op">&lt;=</span> test_size <span class="op">&lt;=</span> <span class="dv">1</span>):</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;test_size must be between 0 and 1&quot;</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  Y_test <span class="op">=</span> []</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  X_test <span class="op">=</span> []</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  X_train <span class="op">=</span> {}</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> label <span class="kw">in</span> mfcc_feats.keys():</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> mfcc <span class="kw">in</span> mfcc_feats[label]:</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> np.random.rand() <span class="op">&lt;=</span> test_size:</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        X_test.append(mfcc.T)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        Y_test.append(label)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>:</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        X_train.setdefault(label, []).append(mfcc)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> X_train, X_test, Y_test</span></code></pre></div>
+</div>
+<div class="cell markdown" id="fx5XgxsrCm04">
+<p>Now, let's evaluate our trained models by calculating accuracy,
+precision, and confusion matrix for them.</p>
+</div>
+<div class="cell code" id="DlHCMDnNCmAc">
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_accuracy_score(Y_true, Y_predict) <span class="op">-&gt;</span> np.double:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  correct_predictions <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> true, predict <span class="kw">in</span> <span class="bu">zip</span>(Y_true, Y_predict)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">if</span> true <span class="op">==</span> predict)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  total_predictions <span class="op">=</span> <span class="bu">len</span>(Y_predict)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> correct_predictions <span class="op">/</span> total_predictions</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_precision_micro_score(Y_true, Y_predict,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                                    classes: List[Union[<span class="bu">str</span>, <span class="bu">int</span>]]) <span class="op">-&gt;</span> np.double:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    total_true_positives <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    total_false_positives <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> label <span class="kw">in</span> classes:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        true_positives, false_positives <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> true, pred <span class="kw">in</span> <span class="bu">zip</span>(Y_true, Y_predict):</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span> pred <span class="op">!=</span> label: <span class="cf">continue</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span> true <span class="op">==</span> label: true_positives <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>          <span class="cf">elif</span> true <span class="op">!=</span> label: false_positives <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        total_true_positives <span class="op">+=</span> true_positives</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        total_false_positives <span class="op">+=</span> false_positives</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> total_true_positives <span class="op">+</span> total_false_positives <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> total_true_positives <span class="op">/</span> (total_true_positives <span class="op">+</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>                                       total_false_positives)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_confusion_matrix(y_true, y_predict,</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>                               classes: List[Union[<span class="bu">int</span>, <span class="bu">str</span>]]) <span class="op">-&gt;</span> Dict[Tuple[Union[<span class="bu">int</span>, <span class="bu">str</span>], Union[<span class="bu">int</span>, <span class="bu">str</span>]], <span class="bu">int</span>]:</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    confusion_matrix <span class="op">=</span> {(true_label, pred_label): <span class="dv">0</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> true_label <span class="kw">in</span> classes <span class="cf">for</span> pred_label <span class="kw">in</span> classes}</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> true_label, pred_label <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_predict):</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>        pair <span class="op">=</span> (true_label, pred_label)</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>        confusion_matrix[pair] <span class="op">=</span> confusion_matrix.get(pair, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> confusion_matrix</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_confusion_matrix(confusion_matrix: np.ndarray,</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>                          classes: List[Union[<span class="bu">int</span>, <span class="bu">str</span>]]) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    num_classes <span class="op">=</span> <span class="bu">len</span>(classes)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    matrix <span class="op">=</span> [[confusion_matrix.get((i, j), <span class="dv">0</span>) <span class="cf">for</span> j <span class="kw">in</span> classes] <span class="cf">for</span> i <span class="kw">in</span> classes]</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">&#39;Blues&#39;</span>, fmt<span class="op">=</span><span class="st">&#39;d&#39;</span>)</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">&#39;Predicted&#39;</span>)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">&#39;True&#39;</span>)</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    plt.xticks(ticks<span class="op">=</span><span class="bu">range</span>(num_classes), labels<span class="op">=</span>classes)</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>    plt.yticks(ticks<span class="op">=</span><span class="bu">range</span>(num_classes), labels<span class="op">=</span>classes)</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">&#39;Confusion Matrix&#39;</span>)</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code></pre></div>
+</div>
+<div class="cell code" id="2HlZBOITHmkD">
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(trained_models: Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], hmm.GaussianHMM],</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                          mfcc_feats_test: List[np.ndarray],</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                          Y_test: List[Union[<span class="bu">int</span>, <span class="bu">str</span>]],</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                          classes: List[Union[<span class="bu">str</span>, <span class="bu">int</span>]]) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  Y_predict <span class="op">=</span> []</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  test_size <span class="op">=</span> <span class="bu">len</span>(mfcc_feats_test)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> y, mfcc <span class="kw">in</span> <span class="bu">zip</span>(Y_test, mfcc_feats_test):</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    max_score <span class="op">=</span> <span class="bu">float</span>(<span class="st">&#39;-inf&#39;</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    predict <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> label, hmm <span class="kw">in</span> trained_models.items():</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      score <span class="op">=</span> hmm.score(mfcc)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="kw">not</span> score <span class="op">&gt;</span> max_score: <span class="cf">continue</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      max_score <span class="op">=</span> score</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      predict <span class="op">=</span> label</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    Y_predict.append(predict)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  accuracy <span class="op">=</span> calculate_accuracy_score(Y_test, Y_predict)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">&quot;Accuracy: &quot;</span>, accuracy)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  precision <span class="op">=</span> calculate_precision_micro_score(Y_test, Y_predict, classes)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">&quot;Micro Precision: &quot;</span>, precision)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  cm <span class="op">=</span> calculate_confusion_matrix(Y_test, Y_predict, classes)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  plot_confusion_matrix(cm, classes)</span></code></pre></div>
+</div>
+<div class="cell markdown" id="4sNntrhLaFvL">
+<p>First, we train our model with the target variable as the digit.
+Then, we evaluate it using accuracy score, precision (micro) score, and
+confusion matrix.</p>
+</div>
+<div class="cell code"
+data-colab="{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:753}"
+id="T9ZvSusgaMnl" data-outputId="391705fc-0cc2-4755-c039-6e2a109f9814">
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_test <span class="op">=</span> split_test_train_data(mfcc_features_group_by_digit)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>digit_target_var_trained_models <span class="op">=</span> train_hmms(mfcc_features_group_by_digit)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>evaluate_model(digit_target_var_trained_models, X_test, Y_test,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">list</span>(<span class="bu">set</span>(digits)))</span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>Accuracy:  0.8966613672496025
+Micro Precision:  0.8966613672496025
+</code></pre>
+</div>
+<div class="output display_data">
+<p><img
+src="images/cm_digit.png" /></p>
+</div>
+</div>
+<div class="cell markdown" id="gVbEzhOhbyAk">
+<p>Now, we train our model in a way that our target variable is the
+speaker. Then, we evaluate it using accuracy score, precision (micro)
+score, and confusion matrix.</p>
+</div>
+<div class="cell code"
+data-colab="{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:753}"
+id="kxDHdV6ob5IN" data-outputId="c4ef5157-e760-4836-9ba4-c5371f586eee">
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_test <span class="op">=</span> split_test_train_data(mfcc_features_group_by_speaker)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>speaker_target_var_trained_models <span class="op">=</span> train_hmms(mfcc_features_group_by_speaker)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>evaluate_model(speaker_target_var_trained_models, X_test, Y_test,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">list</span>(<span class="bu">set</span>(speakers)))</span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>Accuracy:  0.9105960264900662
+Micro Precision:  0.9105960264900662
+</code></pre>
+</div>
+<div class="output display_data">
+<p><img
+src="images/cm_speaker.png" /></p>
+</div>
+</div>
+<section id="implementing-from-scratch" class="cell markdown"
+id="MF5AyI5iLwJM">
+<h2>Implementing from Scratch</h2>
+<p>In this section, we delve into the implementation of the Hidden
+Markov Model (HMM) from scratch.</p>
+</section>
+<div class="cell markdown" id="QXcEwklcVPT5">
+<p>Here is our HMM implementation</p>
+</div>
+<div class="cell code" id="K44wlyC3Veml">
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HMM:</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, num_hidden_states: <span class="bu">int</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                 num_observations: Union[<span class="bu">int</span>, <span class="va">None</span>] <span class="op">=</span> <span class="va">None</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.num_hidden_states <span class="op">=</span> num_hidden_states</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.num_observations <span class="op">=</span> num_observations</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.rand_state <span class="op">=</span> np.random.RandomState(<span class="dv">1</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.initial_prob <span class="op">=</span> <span class="va">self</span>._normalize(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.rand_state.rand(<span class="va">self</span>.num_hidden_states))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.transition_matrix <span class="op">=</span> <span class="va">self</span>._stochasticize(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.rand_state.rand(<span class="va">self</span>.num_hidden_states,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="va">self</span>.num_hidden_states))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.emission_matrix <span class="op">=</span> <span class="va">self</span>._stochasticize(</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.rand_state.rand(<span class="va">self</span>.num_hidden_states,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>                                 <span class="va">self</span>.num_observations))</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _normalize(<span class="va">self</span>, x: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.<span class="bu">all</span>(x <span class="op">==</span> <span class="dv">0</span>):</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>          <span class="cf">return</span> np.ones_like(x) <span class="op">/</span> <span class="bu">len</span>(x)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>          <span class="cf">return</span> x <span class="op">/</span> np.<span class="bu">sum</span>(x)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _stochasticize(<span class="va">self</span>, x: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>        row_sums <span class="op">=</span> np.<span class="bu">sum</span>(x, axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        zero_sum_indices <span class="op">=</span> np.where(row_sums <span class="op">==</span> <span class="dv">0</span>)[<span class="dv">0</span>]</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        uniform_distribution <span class="op">=</span> np.ones_like(x[<span class="dv">0</span>]) <span class="op">/</span> <span class="bu">len</span>(x[<span class="dv">0</span>])</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        x_stochastic <span class="op">=</span> x.copy()</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        x_stochastic[zero_sum_indices] <span class="op">=</span> uniform_distribution</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x_stochastic</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _forward(<span class="va">self</span>, observation_sequence: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>        T <span class="op">=</span> observation_sequence.shape[<span class="dv">1</span>]</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>        alpha <span class="op">=</span> np.zeros((<span class="va">self</span>.num_hidden_states, T))</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>        alpha[:, <span class="dv">0</span>] <span class="op">=</span> np.multiply(<span class="va">self</span>.initial_prob,</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>                            <span class="va">self</span>.emission_matrix[:, observation_sequence[<span class="dv">0</span>]])</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, T):</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>            alpha[:, t] <span class="op">=</span> np.multiply(</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>                np.dot(alpha[:, t <span class="op">-</span> <span class="dv">1</span>], <span class="va">self</span>.transition_matrix),</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.emission_matrix[:, observation_sequence[t]])</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> alpha</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _backward(<span class="va">self</span>, observation_sequence: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>      T <span class="op">=</span> observation_sequence.shape[<span class="dv">1</span>]</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>      beta <span class="op">=</span> np.zeros((<span class="va">self</span>.num_hidden_states, T))</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>      beta[:, <span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(T <span class="op">-</span> <span class="dv">1</span>)[::<span class="op">-</span><span class="dv">1</span>]:</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>        beta[:, t] <span class="op">=</span> np.multiply(</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>            np.dot(<span class="va">self</span>.transition_matrix,</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>                   <span class="va">self</span>.emission_matrix[:, observation_sequence[t <span class="op">+</span> <span class="dv">1</span>]],</span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a>                   beta[:, T <span class="op">+</span> <span class="dv">1</span>]))</span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> beta</span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _gamma(<span class="va">self</span>, alpha: np.ndarray, beta: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="va">self</span>._nomalize(np.multiply(alpha, beta))</span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _xi(<span class="va">self</span>, observation_sequence: np.ndarray, alpha: np.ndarray,</span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a>            beta: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a>      T <span class="op">=</span> observation_sequence.shape[<span class="dv">1</span>]</span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a>      xi <span class="op">=</span> np.zeros((<span class="va">self</span>.num_hidden_states, <span class="va">self</span>.num_hidden_states, T <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(T <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>        xi[:, :, t] <span class="op">=</span> <span class="va">self</span>.normalize(</span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a>            np.multiply(alpha[:, t], <span class="va">self</span>.transition_matrix,</span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a>                        <span class="va">self</span>.emission_matrix[:, observation_sequence[t <span class="op">+</span> <span class="dv">1</span>]],</span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a>                        beta[: , t <span class="op">+</span> <span class="dv">1</span>]))</span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> xi</span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _em_step(<span class="va">self</span>, observation_sequence: np.ndarray) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Expectation Step</span></span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a>      alpha <span class="op">=</span> <span class="va">self</span>._forward(observation_sequence)</span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a>      beta <span class="op">=</span> <span class="va">self</span>._backward(observation_sequence)</span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a>      gamma <span class="op">=</span> <span class="va">self</span>._gamma(alpha, beta)</span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a>      xi <span class="op">=</span> <span class="va">self</span>._xi(observation_sequence, alpha, beta)</span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Maximization Step</span></span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.initial_prob <span class="op">=</span> gamma[:, <span class="dv">0</span>]</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.transition_matrix <span class="op">=</span> np.divide(np.<span class="bu">sum</span>(xi, axis<span class="op">=</span><span class="dv">2</span>),</span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>                                  np.<span class="bu">sum</span>(gamma[:, :<span class="op">-</span><span class="dv">1</span>], axis<span class="op">=</span><span class="dv">1</span>)[:, np.newaxis])</span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.emission_matrix <span class="op">=</span> np.divide(</span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>          np.<span class="bu">sum</span>(gamma[:, :, <span class="va">None</span>] <span class="op">*</span> (observation_sequence[:, <span class="va">None</span>] <span class="op">==</span> np.arange(<span class="va">self</span>.num_observations)), axis<span class="op">=</span><span class="dv">1</span>),</span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a>          np.<span class="bu">sum</span>(gamma, axis<span class="op">=</span><span class="dv">1</span>)[:, <span class="va">None</span>])</span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train(<span class="va">self</span>, observation_sequences: np.ndarray,</span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a>              num_iterations: <span class="bu">int</span> <span class="op">=</span> <span class="dv">100</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_iterations):</span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> obs_seq <span class="kw">in</span> observation_sequences:</span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>._em_step(obs_seq)</span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> score(<span class="va">self</span>, observation_sequence: np.ndarray) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>        alpha <span class="op">=</span> <span class="va">self</span>._forward(observation_sequence)</span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.<span class="bu">sum</span>(alpha[:, <span class="op">-</span><span class="dv">1</span>])</span></code></pre></div>
+</div>
+<div class="cell markdown" id="BVoXk0HcI8wO">
+<p>Now, let's test our HMM. Train HMMs for target var digit, and
+speaker, and then evaluate them.</p>
+</div>
+<div class="cell code" id="7iGf8Z8MJQZC">
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_custom_hmms(mfcc_feats: Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], List[np.ndarray]]) <span class="op">-&gt;</span> Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], HMM]:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  trained_models <span class="op">=</span> {}</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  num_hidden_states <span class="op">=</span> <span class="bu">len</span>(mfcc_feats.keys())</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  num_observations <span class="op">=</span> NUM_CEPSTRAL</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> target_var <span class="kw">in</span> mfcc_feats.keys():</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> HMM(num_hidden_states<span class="op">=</span>num_hidden_states,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                num_observations<span class="op">=</span>num_observations)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    observations_sequence <span class="op">=</span> [mfcc.T <span class="cf">for</span> mfcc <span class="kw">in</span> mfcc_feats[target_var]]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    model.train(observations_sequence)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    trained_models[target_var] <span class="op">=</span> model</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> trained_models</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_custom_model(trained_models: Dict[Union[<span class="bu">int</span>, <span class="bu">str</span>], HMM],</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                          mfcc_feats_test: List[np.ndarray],</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                          Y_test: List[Union[<span class="bu">int</span>, <span class="bu">str</span>]],</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                          classes: List[Union[<span class="bu">str</span>, <span class="bu">int</span>]]) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  Y_predict <span class="op">=</span> []</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  test_size <span class="op">=</span> <span class="bu">len</span>(mfcc_feats_test)</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> y, mfcc <span class="kw">in</span> <span class="bu">zip</span>(Y_test, mfcc_feats_test):</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    max_score <span class="op">=</span> <span class="bu">float</span>(<span class="st">&#39;-inf&#39;</span>)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    predict <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> label, hmm <span class="kw">in</span> trained_models.items():</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>      score <span class="op">=</span> hmm.score(mfcc)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="kw">not</span> score <span class="op">&gt;</span> max_score: <span class="cf">continue</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>      max_score <span class="op">=</span> score</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>      predict <span class="op">=</span> label</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    Y_predict.append(predict)</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  accuracy <span class="op">=</span> calculate_accuracy_score(Y_test, Y_predict)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">&quot;Accuracy: &quot;</span>, accuracy)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>  precision <span class="op">=</span> calculate_precision_micro_score(Y_test, Y_predict, classes)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">&quot;Micro Precision: &quot;</span>, precision)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>  cm <span class="op">=</span> calculate_confusion_matrix(Y_test, Y_predict, classes)</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>  plot_confusion_matrix(cm, classes)</span></code></pre></div>
+</div>
+<div class="cell code" id="qXidgkRBSFPp">
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_test <span class="op">=</span> split_test_train_data(mfcc_features_group_by_digit)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>speaker_target_var_trained_models <span class="op">=</span> train_custom_hmms(mfcc_features_group_by_digit)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>evaluate_custom_model(speaker_target_var_trained_models, X_test, Y_test,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">list</span>(<span class="bu">set</span>(digits)))</span></code></pre></div>
+</div>
+<div class="cell code" id="t78jnMeFRt0G">
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_test <span class="op">=</span> split_test_train_data(mfcc_features_group_by_speaker)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>speaker_target_var_trained_models <span class="op">=</span> train_custom_hmms(mfcc_features_group_by_speaker)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>evaluate_custom_model(speaker_target_var_trained_models, X_test, Y_test,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">list</span>(<span class="bu">set</span>(speakers)))</span></code></pre></div>
+</div>
+<section id="model-evaluation-and-testing" class="cell markdown"
+id="gPqhHJdzLlKN">
+<h1>Model Evaluation And Testing</h1>
+</section>
+<div class="cell markdown" id="TD_iOOKVGUe_">
+<ol>
+<li><p>Describe, <strong>Accuacy Score</strong>,
+<strong>Precision</strong>, <strong>Recall</strong>,
+<strong>F1</strong>.</p>
+<blockquote>
+<ul>
+<li><strong>Accuracy</strong> measures the proportion of correctly
+classified cases from the total number of objects in the dataset. To
+compute the metric, divide the number of correct predictions by the
+total number of predictions made by the model. <span
+class="math display">$$Accuracy =
+\frac{correct\hspace{0.3em}predictions}{all\hspace{0.3em}predictions}$$</span></li>
+<li><strong>Precision</strong>: <span class="math display">$$TP →
+predict \hspace{0.2em} label = true \hspace{0.2em} label \hspace{0.5em}
+and \hspace{0.5em} true \hspace{0.2em} label = positive$$</span> <span
+class="math display">$$FP → predict \hspace{0.2em} label \neq true
+\hspace{0.2em} label \hspace{0.5em} and \hspace{0.5em} true
+\hspace{0.2em} label = negative$$</span> <span class="math display">$$FN
+→ predict \hspace{0.2em} label \neq true \hspace{0.2em} label
+\hspace{0.5em} and \hspace{0.5em} true \hspace{0.2em} label =
+positive$$</span> <span class="math display">$$TN → predict
+\hspace{0.2em} label = true \hspace{0.2em} label \hspace{0.5em} and
+\hspace{0.5em} true \hspace{0.2em} label = negative$$</span>
+<ul>
+<li>binary classification: <span class="math display">$$Precision =
+\frac{TP}{TP + FP}$$</span></li>
+<li>multi-class classification:To calculate the precision, we divide the
+number of correct predictions of each Class by the total number of that
+Class predictions (true and false). <span
+class="math display">$$Precission_{class} = \frac{TP_{class}}{TP_{class}
++ FP_{class}}$$</span></li>
+</ul></li>
+<li><strong>Recall</strong>:
+<ul>
+<li>binary classification: <span class="math display">$$Recall =
+\frac{TP}{TP + FN}$$</span></li>
+<li>multi-class classification: To calculate the recall, we divide the
+number of correct predictions of Class “A” by the total number of Class
+“A” objects in the dataset (both identified and not) <span
+class="math display">$$Recall_{class} = \frac{TP_{class}}{TP_{class} +
+FN_{class}}$$</span></li>
+</ul></li>
+<li><strong>F1 Score</strong>:
+<ul>
+<li>binary classification: <span
+class="math display">$$F1\hspace{0.2em}Score = 2 \times \frac{Precission
+× Recall}{Precission + Recall}$$</span></li>
+<li>multi-class classification:
+<ul>
+<li>macro-avg: <span class="math display">$$Precision_{macro avg} =
+\frac{Precission_{class_1} + … + Precission_{class_N}}{N}$$</span> <span
+class="math display">$$Recall_{macro avg} = \frac{Recall_{class_1} + … +
+Recall_{class_N}}{N}$$</span> <span class="math display">$$F1_{macro
+avg} = 2 \times \frac{Precission_{macro avg} + Recall_{macro
+avg}}{Precission_{macro avg} × Recall_{macro avg}}$$</span></li>
+<li>micro-avg: <span class="math display">$$Precision_{micro avg} =
+\frac{TP_{class_1} + … + TP_{class_N}}{TP_{class_1} FP_{class_1} + … +
+FP_{class_N} + TP_{class_N}}$$</span> <span
+class="math display">$$Recall_{micro avg} = \frac{TP_{class_1} + … +
+TP_{class_N}}{TP_{class_1} FN_{class_1} + … + FN_{class_N} +
+TP_{class_N}}$$</span> <span class="math display">$$F1_{micro avg} = 2
+\times \frac{Precission_{micro avg} + Recall_{micro
+avg}}{Precission_{micro avg} × Recall_{micro avg}}$$</span></li>
+<li>wieghted: This approach takes into account the balance of classes.
+You weigh each class based on its representation in the dataset. Then,
+you compute precision and recall as a weighted average of the precision
+and recall in individual classes. Simply put, it would work like
+macro-averaging, but instead of dividing precision and recall by the
+number of classes, you give each class a fair representation based on
+the proportion it takes in the dataset.</li>
+</ul></li>
+</ul></li>
+</ul>
+</blockquote></li>
+<li><p>Decribe challenges for this multi-class problem and suggest
+solution for it.</p>
+<blockquote>
+<p>Cosider our target var as a class either number, speaker name and etc
+and calculate this use above formulas.</p>
+</blockquote></li>
+<li><p>Describe each of these metrics and how to measure model
+performance.</p>
+<blockquote>
+<ul>
+<li><strong>Accuracy</strong> measures the proportion of correctly
+classified cases from the total number of objects in the dataset</li>
+<li><strong>Precision</strong> measures the model's ability to identify
+instances of a particular class correctly.</li>
+<li><strong>Recall</strong> measures the model's ability to identify all
+instances of a particular class.</li>
+<li><strong>Macro-averaging</strong> calculates each class's performance
+metric (e.g., precision, recall) and then takes the arithmetic mean
+across all classes. So, the macro-average gives equal weight to each
+class, regardless of the number of instances.</li>
+<li><strong>Micro-averaging</strong>, on the other hand, aggregates the
+counts of true positives, false positives, and false negatives across
+all classes and then calculates the performance metric based on the
+total counts. So, the micro-average gives equal weight to each instance,
+regardless of the class label and the number of cases in the class.</li>
+</ul>
+</blockquote></li>
+<li><p>Describe the difference between Recall and Precision and explain
+why each of them alone is not sufficient. Provide examples for each
+where the value is high but the model performance is not good
+enough.</p>
+<blockquote>
+<p>Recall measures the ability of a model to correctly identify all
+relevant instances (true positives) from the total number of actual
+positive instances. Precision measures the ability of a model to
+correctly identify only the relevant instances (true positives) out of
+all instances predicted as positive. Recall focuses on capturing all
+relevant instances, while precision focuses on minimizing false
+positives. While high recall indicates that the model is effectively
+capturing a large proportion of positive instances, it does not consider
+the number of false positives the model may produce. High precision
+means that when the model predicts a positive instance, it is likely to
+be correct. However, it does not consider the possibility of missing
+relevant instances (false negatives).<br> For example, consider 100
+groups of people, comprising 35 women and 65 men. Among the women, 30
+are pregnant. Suppose a model classifies 25 of the women as pregnant,
+but also misclassifies all of the men as pregnant. This situation
+results in high recall but low precision. Thus, in this scenario, recall
+alone is not sufficient.<br> Suppose you have a spam email classifier.
+Out of 1000 emails, only 50 are actually spam (positives), and the rest
+are legitimate (negatives). Now, imagine the classifier is highly
+precise but has low recall.The classifier identifies 40 emails as spam,
+and out of those, 35 are actually spam. However, the classifier fails to
+identify many of the actual spam emails and only detects 35 out of the
+50 spam emails.</p>
+</blockquote></li>
+<li><p>Which kind of mean thechnique does F1 Score use? difference with
+normal mean and whay it is matter here?</p>
+<blockquote>
+<p>The F1 score uses the harmonic mean technique to calculate a single
+metric that balances both precision and recall. The harmonic mean is
+used because it gives more weight to lower values. The harmonic mean is
+used because it gives more weight to lower values. F1 score becomes high
+only when both precision and recall are high. Normal mean gives equal
+weight to all values, on the other hand, harmonic weight gives weight to
+lower values.</p>
+</blockquote></li>
+<li><p>Why are the scores of these two models(speaker target var and
+digit target var) different from each other?</p>
+<blockquote>
+<ul>
+<li><strong>Model Complexity</strong>: The complexity of the HMM models
+may vary between the two scenarios. The model trained on
+speaker-specific MFCCs may need to capture more complex patterns related
+to individual speech characteristics, while the model trained on
+number-specific MFCCs may require simpler patterns related to numerical
+sequences.</li>
+<li><strong>Feature Relevance</strong>: MFCCs extracted from speech data
+capture different characteristics depending on whether they are
+speaker-specific or number-specific. Features that are more
+discriminative for distinguishing between speakers may not be as
+effective for distinguishing between numbers, and vice versa.</li>
+<li><strong>Data Variability</strong>: The variability present in the
+data for speaker-specific MFCCs and number-specific MFCCs may differ.
+Variations in speech patterns between speakers and variations in
+pronunciation of digits can affect the models' ability to
+generalize.</li>
+</ul>
+</blockquote></li>
+</ol>
+</div>
+</body>
+</html>
